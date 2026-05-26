@@ -3,11 +3,6 @@ using UnityEngine.SceneManagement;
 
 namespace Tema
 {
-    /// <summary>
-    /// Pus pe fiecare instanta de portal. Cand playerul intra in trigger,
-    /// incarca scena de dungeon. CharacterController-ul playerului declanseaza
-    /// OnTriggerEnter pe colliderele setate ca trigger (fara Rigidbody).
-    /// </summary>
     public class TemaPortalTrigger : MonoBehaviour
     {
         [SerializeField] private string dungeonSceneName = "Scena2";

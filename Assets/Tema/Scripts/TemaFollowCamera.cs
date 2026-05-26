@@ -3,27 +3,18 @@ using UnityEngine.InputSystem;
 
 namespace Tema
 {
-    /// <summary>
-    /// Camera third-person care urmareste playerul si orbiteaza cu mouse-ul.
-    /// Se ataseaza pe Main Camera. Foloseste New Input System.
-    /// Expune directiile planare (forward/right) pentru miscarea camera-relative a playerului.
-    /// </summary>
     public class TemaFollowCamera : MonoBehaviour
     {
-        [Header("Target")]
         [SerializeField] private Transform target;
         [SerializeField] private float targetHeight = 1.6f;
 
-        [Header("Orbit")]
         [SerializeField] private float distance = 8f;
         [SerializeField] private float yawSensitivity = 0.15f;
         [SerializeField] private float pitchSensitivity = 0.12f;
         [SerializeField] private float minPitch = -5f;
         [SerializeField] private float maxPitch = 70f;
-        [Tooltip("Daca e bifat, orbita doar cat tii apasat click dreapta (recomandat in editor).")]
         [SerializeField] private bool requireRightMouseToOrbit = true;
 
-        [Header("Follow")]
         [SerializeField] private float followLerp = 12f;
 
         private float _yaw;
@@ -66,7 +57,6 @@ namespace Tema
             transform.rotation = rot;
         }
 
-        /// <summary>Directia "inainte" a camerei proiectata pe planul orizontal.</summary>
         public Vector3 PlanarForward()
         {
             Vector3 f = transform.forward;
@@ -74,7 +64,6 @@ namespace Tema
             return f.sqrMagnitude > 0.0001f ? f.normalized : Vector3.forward;
         }
 
-        /// <summary>Directia "dreapta" a camerei proiectata pe planul orizontal.</summary>
         public Vector3 PlanarRight()
         {
             Vector3 r = transform.right;

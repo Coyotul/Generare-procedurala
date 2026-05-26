@@ -4,16 +4,9 @@ using UnityEngine;
 
 namespace Tema
 {
-    /// <summary>
-    /// Planta procedurala generata cu un L-system (turtle graphics), configurabila:
-    /// axioma, reguli, unghi, iteratii. Deseneaza segmentele cu LineRenderer.
-    /// Spawner-ul o configureaza in cod (Configure) si apoi cheama Build().
-    /// </summary>
     public class TemaLSystemPlant : MonoBehaviour
     {
-        [Header("L-System")]
         [SerializeField] private string axiom = "X";
-        // Reguli in format "simbol=inlocuire", ex: "X=F-[[X]+X]+F[+FX]-X".
         [SerializeField] private string[] rules = { "X=F-[[X]+X]+F[+FX]-X", "F=FF" };
         [SerializeField] private int iterations = 4;
         [SerializeField] private float angle = 22.5f;
@@ -33,7 +26,6 @@ namespace Tema
             public int Depth;
         }
 
-        /// <summary>Configurare din cod (folosita de spawner).</summary>
         public void Configure(string newAxiom, string[] newRules, int newIterations,
             float newAngle, float newSegmentLength, Color newColor)
         {

@@ -2,10 +2,6 @@ using UnityEngine;
 
 namespace Tema
 {
-    /// <summary>
-    /// O sabie aflata pe harta: pluteste (bob vertical) si se invarte. Cand playerul intra in ea,
-    /// arma curenta a playerului e inlocuita cu aceasta sabie. Spawner-ul ii seteaza prefabul sursa.
-    /// </summary>
     public class TemaSwordPickup : MonoBehaviour
     {
         [SerializeField] private GameObject swordPrefab;

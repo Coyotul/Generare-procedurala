@@ -2,19 +2,11 @@ using UnityEngine;
 
 namespace Tema
 {
-    /// <summary>
-    /// Imprastie sabii in dungeon (Scena 2) la pozitii aleatorii pe podea, plutind deasupra ei.
-    /// Fiecare sabie e aleasa aleator din lista din Inspector si primeste un collider-trigger +
-    /// TemaSwordPickup. Codul doar alege random din lista expusa in Inspector.
-    /// </summary>
     public class TemaSwordSpawner : MonoBehaviour
     {
-        [Header("Refs")]
         [SerializeField] private TemaDungeon3D dungeon;
-        [Tooltip("Prefab-uri de sabii. Trage-le aici din Hovl Studio/MoonSword/Prefabs.")]
         [SerializeField] private GameObject[] swordPrefabs;
 
-        [Header("Spawn")]
         [SerializeField] private int swordCount = 8;
         [SerializeField] private int seed = 555;
         [SerializeField] private float hoverHeight = 1.5f;
@@ -59,7 +51,6 @@ namespace Tema
             TemaSwordPickup pickup = sword.AddComponent<TemaSwordPickup>();
             pickup.Setup(prefab);
 
-            // stats random (doar pentru log)
             TemaSword stats = sword.AddComponent<TemaSword>();
             stats.swordType = SwordTypes[_rng.Next(SwordTypes.Length)];
             stats.damage = _rng.Next(10, 56);

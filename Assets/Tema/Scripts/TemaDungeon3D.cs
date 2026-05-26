@@ -3,22 +3,13 @@ using UnityEngine;
 
 namespace Tema
 {
-    /// <summary>
-    /// Dungeon 3D generat procedural cu BSP (impartire recursiva a spatiului), pe care
-    /// playerul third-person il poate parcurge. Podeaua e o placa mare, iar peretii sunt
-    /// cuburi 3D ridicate doar pe celulele de zid invecinate cu podea (conturul camerelor +
-    /// coridoarelor). Toate camerele sunt conectate prin coridoare (ca la Lab4).
-    /// Dupa generare, playerul e asezat in prima camera (intrarea).
-    /// </summary>
     public class TemaDungeon3D : MonoBehaviour
     {
-        [Header("Grid")]
         [SerializeField] private int width = 48;
         [SerializeField] private int height = 36;
         [SerializeField] private float cellSize = 2f;
         [SerializeField] private float wallHeight = 3f;
 
-        [Header("BSP")]
         [SerializeField] private int maxDepth = 5;
         [SerializeField] private int minLeafSize = 8;
         [SerializeField] private int minRoomSize = 4;
@@ -26,7 +17,6 @@ namespace Tema
         [SerializeField] private bool randomSeed = true;
         [SerializeField] private int seed = 1234;
 
-        [Header("Refs")]
         [SerializeField] private Transform player;
         [SerializeField] private Material floorMaterial;
         [SerializeField] private Material wallMaterial;
@@ -59,7 +49,6 @@ namespace Tema
             if (!IsGenerated) Generate();
         }
 
-        /// <summary>Pozitie aleatoare pe podea (centrul unei celule dintr-o camera), in world space.</summary>
         public bool TryGetRandomFloorPosition(System.Random rng, out Vector3 pos)
         {
             pos = Vector3.zero;
@@ -96,8 +85,6 @@ namespace Tema
             PlacePlayer();
             IsGenerated = true;
         }
-
-        // ---------- BSP (portat din Lab4) ----------
 
         private void Split(BspNode node, int depth)
         {
@@ -245,11 +232,8 @@ namespace Tema
             _walls[x, y] = false;
         }
 
-        // ---------- Build 3D ----------
-
         private void Build(int w, int h)
         {
-            // podea: o placa mare sub tot grid-ul
             GameObject floor = GameObject.CreatePrimitive(PrimitiveType.Cube);
             floor.name = "DungeonFloor";
             floor.transform.SetParent(transform, false);
@@ -257,7 +241,6 @@ namespace Tema
             floor.transform.position = new Vector3(0f, -0.2f, 0f);
             floor.GetComponent<MeshRenderer>().sharedMaterial = floorMaterial;
 
-            // ziduri: doar celulele de zid invecinate cu podea (conturul camerelor/coridoarelor)
             for (int y = 0; y < h; y++)
                 for (int x = 0; x < w; x++)
                 {

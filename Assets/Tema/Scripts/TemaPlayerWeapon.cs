@@ -3,15 +3,8 @@ using UnityEngine.InputSystem;
 
 namespace Tema
 {
-    /// <summary>
-    /// Arma curenta a playerului. Cand ridica o sabie, vechea arma e inlocuita cu noua
-    /// (instanta din prefabul sabiei, atasata la mana). Atacul (click stanga) doar
-    /// porneste particle system-urile sabiei.
-    /// </summary>
     public class TemaPlayerWeapon : MonoBehaviour
     {
-        [Header("Hold")]
-        [Tooltip("Unde se tine arma. Daca e gol, se cauta osul mainii; altfel se ataseaza la player.")]
         [SerializeField] private Transform weaponHolder;
         [SerializeField] private Vector3 holdLocalPosition = new Vector3(0.2f, 1f, 0.3f);
         [SerializeField] private Vector3 holdLocalEuler = Vector3.zero;

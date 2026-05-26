@@ -2,26 +2,17 @@ using UnityEngine;
 
 namespace Tema
 {
-    /// <summary>
-    /// Imprastie procedural doua tipuri de plante (L-system) pe teren, in pozitii aleatorii,
-    /// filtrate pe elevatie ca sa nu apara in apa sau pe varfuri de zapada.
-    /// Tip A = copac (varianta f din Algorithmic Beauty of Plants),
-    /// Tip B = tufis (varianta d). Plantele sunt create din cod.
-    /// </summary>
     public class TemaVegetationSpawner : MonoBehaviour
     {
-        [Header("Refs")]
         [SerializeField] private TemaTerrain terrain;
 
-        [Header("Counts")]
         [SerializeField] private int treeCount = 40;
         [SerializeField] private int bushCount = 60;
         [SerializeField] private int seed = 12345;
         [SerializeField] private int maxPlacementTries = 12;
 
-        [Header("Biome filter (elevatie 0..1)")]
-        [SerializeField] private float minElevation = 0.40f; // peste plaja/apa
-        [SerializeField] private float maxElevation = 0.85f; // sub zapada
+        [SerializeField] private float minElevation = 0.40f;
+        [SerializeField] private float maxElevation = 0.85f;
 
         private System.Random _rng;
 
@@ -61,7 +52,6 @@ namespace Tema
             GameObject go = new GameObject(isTree ? $"Tree_{index}" : $"Bush_{index}");
             go.transform.SetParent(transform, false);
             go.transform.position = position;
-            // rotatie aleatoare in jurul axei verticale -> varietate 3D pentru plante planare
             go.transform.rotation = Quaternion.Euler(0f, (float)_rng.NextDouble() * 360f, 0f);
 
             TemaLSystemPlant plant = go.AddComponent<TemaLSystemPlant>();
@@ -70,7 +60,7 @@ namespace Tema
             {
                 plant.Configure(
                     "X",
-                    new[] { "X=F-[[X]+X]+F[+FX]-X", "F=FF" }, // varianta (f)
+                    new[] { "X=F-[[X]+X]+F[+FX]-X", "F=FF" },
                     4,
                     22.5f,
                     0.35f,
@@ -80,7 +70,7 @@ namespace Tema
             {
                 plant.Configure(
                     "X",
-                    new[] { "X=F[+X]F[-X]+X", "F=FF" },        // varianta (d)
+                    new[] { "X=F[+X]F[-X]+X", "F=FF" },
                     3,
                     20f,
                     0.22f,

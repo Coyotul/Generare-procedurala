@@ -3,17 +3,11 @@ using UnityEngine;
 
 namespace Tema
 {
-    /// <summary>
-    /// Terenul lumii deschise: mesh procedural cu biomi (elevatie + umiditate, ca la Lab5),
-    /// collider pentru raycast, plus suport pentru sampling de inaltime (plasare obiecte) si
-    /// pentru deformare in timp real (lopata). Refoloseste noise-ul din Lab5BiomeNoise.
-    /// </summary>
     [RequireComponent(typeof(MeshFilter))]
     [RequireComponent(typeof(MeshRenderer))]
     [RequireComponent(typeof(MeshCollider))]
     public class TemaTerrain : MonoBehaviour
     {
-        [Header("Grid")]
         [SerializeField] private int mapWidth = 160;
         [SerializeField] private int mapHeight = 160;
         [SerializeField] private float meshScale = 1f;
@@ -21,21 +15,18 @@ namespace Tema
         [SerializeField] private float waterLevel = 0.35f;
         [SerializeField] private bool centerAtOrigin = true;
 
-        [Header("Elevation noise")]
         [SerializeField] private int elevationSeed = 2026;
         [SerializeField] private float elevationScale = 4f;
         [SerializeField] private int elevationOctaves = 7;
         [SerializeField] private float elevationLacunarity = 2f;
         [SerializeField, Range(0f, 1f)] private float elevationPersistence = 0.5f;
 
-        [Header("Moisture noise")]
         [SerializeField] private int moistureSeed = 9173;
         [SerializeField] private float moistureScale = 3f;
         [SerializeField] private int moistureOctaves = 6;
         [SerializeField] private float moistureLacunarity = 2f;
         [SerializeField, Range(0f, 1f)] private float moisturePersistence = 0.5f;
 
-        [Header("Digging")]
         [SerializeField] private float minDigY = -15f;
 
         private MeshFilter _meshFilter;
@@ -50,7 +41,6 @@ namespace Tema
 
         public bool IsGenerated { get; private set; }
 
-        // Limitele lumii pe XZ (world space) - folosite de spawnere.
         public float MinWorldX => 0f - _originOffset.x;
         public float MaxWorldX => (_w - 1) * meshScale - _originOffset.x;
         public float MinWorldZ => 0f - _originOffset.z;
@@ -164,26 +154,23 @@ namespace Tema
 
         private Color GetBiomeColor(float elevation, float moisture)
         {
-            if (elevation < waterLevel) return new Color(0.10f, 0.35f, 0.70f); // Ocean
-            if (elevation < 0.40f) return new Color(0.93f, 0.88f, 0.66f);      // Plaja
+            if (elevation < waterLevel) return new Color(0.10f, 0.35f, 0.70f);
+            if (elevation < 0.40f) return new Color(0.93f, 0.88f, 0.66f);
             if (elevation < 0.75f)
             {
-                if (moisture < 0.20f) return new Color(0.93f, 0.83f, 0.52f); // Desert
-                if (moisture < 0.40f) return new Color(0.78f, 0.78f, 0.45f); // Savana
-                if (moisture < 0.65f) return new Color(0.42f, 0.65f, 0.32f); // Padure
-                if (moisture < 0.85f) return new Color(0.18f, 0.50f, 0.22f); // Jungla
-                return new Color(0.28f, 0.45f, 0.40f);                       // Mlastina
+                if (moisture < 0.20f) return new Color(0.93f, 0.83f, 0.52f);
+                if (moisture < 0.40f) return new Color(0.78f, 0.78f, 0.45f);
+                if (moisture < 0.65f) return new Color(0.42f, 0.65f, 0.32f);
+                if (moisture < 0.85f) return new Color(0.18f, 0.50f, 0.22f);
+                return new Color(0.28f, 0.45f, 0.40f);
             }
             if (elevation < 0.85f)
                 return moisture < 0.40f
-                    ? new Color(0.80f, 0.85f, 0.85f)  // Tundra
-                    : new Color(0.20f, 0.40f, 0.30f); // Taiga
-            return Color.white; // Zapada
+                    ? new Color(0.80f, 0.85f, 0.85f)
+                    : new Color(0.20f, 0.40f, 0.30f);
+            return Color.white;
         }
 
-        // ---------- API public pentru spawnere si lopata ----------
-
-        /// <summary>Inaltimea (world Y) a suprafetei la o pozitie XZ in world space (bilinear).</summary>
         public float SampleHeight(float worldX, float worldZ)
         {
             if (_vertices == null) return 0f;
@@ -208,7 +195,6 @@ namespace Tema
             return Mathf.Lerp(a, b, tz);
         }
 
-        /// <summary>Elevatia normalizata [0,1] (pentru filtrare pe biom la spawn).</summary>
         public float SampleElevation01(float worldX, float worldZ)
         {
             if (_elevation == null) return 0f;
@@ -219,10 +205,6 @@ namespace Tema
             return _elevation[x, z];
         }
 
-        /// <summary>
-        /// Coboara vertecsii din raza data in jurul punctului (world space) cu un falloff neted.
-        /// Reconstruieste normalele si collider-ul. Apelat continuu cat timp se sapa.
-        /// </summary>
         public void Dig(Vector3 worldPoint, float radius, float strength)
         {
             if (_vertices == null) return;
@@ -249,8 +231,8 @@ namespace Tema
                     float d2 = dx * dx + dz * dz;
                     if (d2 > r2) continue;
 
-                    float falloff = 1f - Mathf.Sqrt(d2) / radius; // 1 in centru -> 0 la margine
-                    falloff = falloff * falloff * (3f - 2f * falloff); // smoothstep
+                    float falloff = 1f - Mathf.Sqrt(d2) / radius;
+                    falloff = falloff * falloff * (3f - 2f * falloff);
                     float newY = v.y - strength * falloff;
                     if (newY < minDigY) newY = minDigY;
                     if (!Mathf.Approximately(newY, v.y))
