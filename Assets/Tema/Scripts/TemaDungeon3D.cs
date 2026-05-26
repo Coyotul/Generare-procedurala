@@ -36,6 +36,9 @@ namespace Tema
         private readonly List<RectInt> _rooms = new List<RectInt>();
         private Vector3 _origin;
 
+        public bool IsGenerated { get; private set; }
+        public int RoomCount => _rooms.Count;
+
         private class BspNode
         {
             public RectInt Area;
@@ -48,7 +51,24 @@ namespace Tema
 
         private void Start()
         {
-            Generate();
+            EnsureGenerated();
+        }
+
+        public void EnsureGenerated()
+        {
+            if (!IsGenerated) Generate();
+        }
+
+        /// <summary>Pozitie aleatoare pe podea (centrul unei celule dintr-o camera), in world space.</summary>
+        public bool TryGetRandomFloorPosition(System.Random rng, out Vector3 pos)
+        {
+            pos = Vector3.zero;
+            if (_rooms == null || _rooms.Count == 0) return false;
+            RectInt room = _rooms[rng.Next(_rooms.Count)];
+            int cx = rng.Next(room.xMin, room.xMax);
+            int cy = rng.Next(room.yMin, room.yMax);
+            pos = CellToWorld(cx, cy);
+            return true;
         }
 
         [ContextMenu("Generate Dungeon")]
@@ -74,6 +94,7 @@ namespace Tema
             EnsureMaterials();
             Build(w, h);
             PlacePlayer();
+            IsGenerated = true;
         }
 
         // ---------- BSP (portat din Lab4) ----------
