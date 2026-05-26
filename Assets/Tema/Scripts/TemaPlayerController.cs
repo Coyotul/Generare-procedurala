@@ -26,11 +26,13 @@ namespace Tema
         [SerializeField] private float runSpeed = 6f;
         [SerializeField] private float rotationLerp = 14f;
         [SerializeField] private float gravity = -20f;
+        [SerializeField] private float jumpHeight = 1.5f;
 
         [Header("Animator params")]
         [SerializeField] private string vertParam = "Vert";
         [SerializeField] private string horParam = "Hor";
         [SerializeField] private string stateParam = "State";
+        [SerializeField] private string jumpParam = "IsJump";
         [SerializeField] private float animDamp = 0.12f;
 
         [Header("Dig (hold L)")]
@@ -75,15 +77,21 @@ namespace Tema
                     1f - Mathf.Exp(-rotationLerp * Time.deltaTime));
             }
 
-            // gravitatie + deplasare
-            if (_cc.isGrounded && _verticalVelocity < 0f) _verticalVelocity = -2f;
+            // gravitatie + salt
+            bool grounded = _cc.isGrounded;
+            if (grounded && _verticalVelocity < 0f) _verticalVelocity = -2f;
+
+            bool jumpPressed = Keyboard.current != null && Keyboard.current.spaceKey.wasPressedThisFrame;
+            if (grounded && jumpPressed)
+                _verticalVelocity = Mathf.Sqrt(-2f * gravity * Mathf.Max(0f, jumpHeight));
+
             _verticalVelocity += gravity * Time.deltaTime;
 
             float speed = running ? runSpeed : walkSpeed;
             Vector3 displacement = moveDir * speed + Vector3.up * _verticalVelocity;
             _cc.Move(displacement * Time.deltaTime);
 
-            UpdateAnimator(moveAmount, running);
+            UpdateAnimator(moveAmount, running, _cc.isGrounded);
             HandleDigging();
         }
 
@@ -96,13 +104,14 @@ namespace Tema
             return new Vector2(x, y);
         }
 
-        private void UpdateAnimator(float moveAmount, bool running)
+        private void UpdateAnimator(float moveAmount, bool running, bool grounded)
         {
             if (animator == null) return;
             // playerul se roteste mereu spre directia de mers => miscarea e "inainte" in local space
             animator.SetFloat(vertParam, moveAmount, animDamp, Time.deltaTime);
             animator.SetFloat(horParam, 0f, animDamp, Time.deltaTime);
             animator.SetFloat(stateParam, running ? 1f : 0f, animDamp, Time.deltaTime);
+            animator.SetBool(jumpParam, !grounded);
         }
 
         private void HandleDigging()
